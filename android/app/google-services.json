@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "376529979432",
+    "project_id": "movie-player-1abba",
+    "storage_bucket": "movie-player-1abba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376529979432:android:f5a98366d636034e98cd1d",
+        "android_client_info": {
+          "package_name": "com.example.movie_watcher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376529979432-fh7j5s5vslqc4r8m8v7a91huuvser5j5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.movie_watcher",
+            "certificate_hash": "16e09bb549dce12ed336aaed76316b321d55f985"
+          }
+        },
+        {
+          "client_id": "376529979432-bhk6n6vsbojvrdk2dn23cgls3qj90d6q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQLIN0v9QwqvhDmrmCxYGt4Qvcx0Y-KGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "376529979432-bhk6n6vsbojvrdk2dn23cgls3qj90d6q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

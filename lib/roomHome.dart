@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_watcher/file_picker_button.dart';
+import 'package:movie_watcher/models/idModel.dart';
+import 'package:movie_watcher/pickOrPlay.dart';
 import 'package:movie_watcher/videoPlayer.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 class RoomHome extends StatefulWidget {
-  RoomHome({Key? key, required this.id}) : super(key: key);
-  final String id;
-
+  RoomHome({Key? key}) : super(key: key);
   @override
   _RoomHomeState createState() => _RoomHomeState();
 }
@@ -18,7 +19,7 @@ class _RoomHomeState extends State<RoomHome> {
   void initState() {
     _participantStream = FirebaseFirestore.instance
         .collection('rooms')
-        .doc(widget.id)
+        .doc(Provider.of<IdModel>(context, listen: false).id)
         .snapshots();
     ;
     super.initState();
@@ -34,34 +35,36 @@ class _RoomHomeState extends State<RoomHome> {
           child: Column(
             children: [
               Expanded(
-                child: StreamBuilder(
-                    stream: _participantStream,
-                    builder: (ctxt, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                      if (snapshot.hasError)
-                        return Text("Something went wrong");
-                      if (snapshot.connectionState == ConnectionState.waiting)
-                        return Text("Loading...");
-                      if (snapshot.hasData) {
-                        // snapshot.data.data();
-                        Map<String, dynamic> data =
-                            snapshot.data!.data() as Map<String, dynamic>;
-                        return ListView.separated(
-                          itemBuilder: (_, index) {
-                            // return Text(snapshot.data!
-                            //     .get(FieldPath(['members', index.toString()])));
-                            return Text(data['members'][index]['name']);
-                          },
-                          // itemCount: snapshot.data!.get('members').length,
-                          itemCount: data['members'].length,
-                          separatorBuilder: (_, index) {
-                            return Divider();
-                          },
-                        );
-                      }
-                      return Container();
-                    }),
+                //   child: StreamBuilder(
+                //       stream: _participantStream,
+                //       builder: (ctxt, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                //         if (snapshot.hasError)
+                //           return Text("Something went wrong");
+                //         if (snapshot.connectionState == ConnectionState.waiting)
+                //           return Text("Loading...");
+                //         if (snapshot.hasData) {
+                //           // snapshot.data.data();
+                //           Map<String, dynamic> data =
+                //               snapshot.data!.data() as Map<String, dynamic>;
+                //           return ListView.separated(
+                //             itemBuilder: (_, index) {
+                //               // return Text(snapshot.data!
+                //               //     .get(FieldPath(['members', index.toString()])));
+                //               return Text(data['members'][index]['name']);
+                //             },
+                //             // itemCount: snapshot.data!.get('members').length,
+                //             itemCount: data['members'].length,
+                //             separatorBuilder: (_, index) {
+                //               return Divider();
+                //             },
+                //           );
+                //         }
+                //         return Container();
+                //       }),
+                // ),
+                // FilePickerButton(),
+                child: PickOrPlay(),
               ),
-              FilePickerButton(),
             ],
           ),
         ),

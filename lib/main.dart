@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_watcher/models/idModel.dart';
 import 'package:movie_watcher/roomCreater.dart';
 import 'package:movie_watcher/videoPlayer.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -84,6 +86,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RoomCreater();
+    return ChangeNotifierProvider(
+      create: (context) => IdModel(),
+      child: RoomCreater(),
+    );
   }
 }

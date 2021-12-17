@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_watcher/models/idModel.dart';
 import 'package:movie_watcher/name_enter.dart';
 import 'package:movie_watcher/roomHome.dart';
 import 'package:movie_watcher/utils/randomGen.dart';
+import 'package:provider/provider.dart';
 
 class RoomCreater extends StatelessWidget {
   const RoomCreater({Key? key}) : super(key: key);
@@ -31,6 +33,7 @@ class RoomCreater extends StatelessWidget {
               print(name);
               rooms.doc(id).set({
                 'creator': FirebaseAuth.instance.currentUser!.uid.toString(),
+                "play": false,
                 'members': [
                   {
                     'uid': FirebaseAuth.instance.currentUser!.uid.toString(),
@@ -39,9 +42,16 @@ class RoomCreater extends StatelessWidget {
                 ]
               }).then((value) {
                 print("Room Created");
+                Provider.of<IdModel>(context, listen: false).changeId(id);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (ctxt) => RoomHome(id: id)),
+                  MaterialPageRoute(
+                    builder: (ctxt) => ChangeNotifierProvider(
+                      create: (ctxt) =>
+                          Provider.of<IdModel>(context, listen: false),
+                      child: RoomHome(),
+                    ),
+                  ),
                 );
               }).catchError((error) => print("Error $error"));
             });

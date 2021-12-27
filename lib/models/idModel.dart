@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 
 class IdModel extends ChangeNotifier {
-  String _id = "";
+  String _roomId = "";
+  String _uId = "";
 
-  String get id => _id;
+  String get roomId => _roomId;
+  String get uId => _uId;
 
-  void changeId(String id) {
-    _id = id;
+  void changeRoomId(String rooomId) {
+    _roomId = rooomId;
     notifyListeners();
   }
 
-  void removeId() {
-    _id = "";
+  void changeUId(String uId) {
+    _uId = uId;
+    notifyListeners();
+  }
+
+  void removeRoomId() {
+    _roomId = "";
+    notifyListeners();
+  }
+
+  void removeUId() {
+    _uId = "";
     notifyListeners();
   }
 }

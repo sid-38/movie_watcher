@@ -15,12 +15,20 @@ class RoomHome extends StatefulWidget {
 
 class _RoomHomeState extends State<RoomHome> {
   late final Stream<DocumentSnapshot> _participantStream;
+  String _roomId = "";
+  String _videoPath = "";
+
+  void updateVideoPath(String filePath) {
+    setState(() {
+      _videoPath = filePath;
+    });
+  }
+
   @override
   void initState() {
-    _participantStream = FirebaseFirestore.instance
-        .collection('rooms')
-        .doc(Provider.of<IdModel>(context, listen: false).id)
-        .snapshots();
+    _roomId = Provider.of<IdModel>(context, listen: false).roomId;
+    _participantStream =
+        FirebaseFirestore.instance.collection('rooms').doc(_roomId).snapshots();
     ;
     super.initState();
   }
@@ -34,37 +42,59 @@ class _RoomHomeState extends State<RoomHome> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              Text("Room ID - " + _roomId),
               Expanded(
-                //   child: StreamBuilder(
-                //       stream: _participantStream,
-                //       builder: (ctxt, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                //         if (snapshot.hasError)
-                //           return Text("Something went wrong");
-                //         if (snapshot.connectionState == ConnectionState.waiting)
-                //           return Text("Loading...");
-                //         if (snapshot.hasData) {
-                //           // snapshot.data.data();
-                //           Map<String, dynamic> data =
-                //               snapshot.data!.data() as Map<String, dynamic>;
-                //           return ListView.separated(
-                //             itemBuilder: (_, index) {
-                //               // return Text(snapshot.data!
-                //               //     .get(FieldPath(['members', index.toString()])));
-                //               return Text(data['members'][index]['name']);
-                //             },
-                //             // itemCount: snapshot.data!.get('members').length,
-                //             itemCount: data['members'].length,
-                //             separatorBuilder: (_, index) {
-                //               return Divider();
-                //             },
-                //           );
-                //         }
-                //         return Container();
-                //       }),
-                // ),
-                // FilePickerButton(),
-                child: PickOrPlay(),
+                child: StreamBuilder(
+                    stream: _participantStream,
+                    builder: (ctxt, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (snapshot.hasError)
+                        return Text("Something went wrong");
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return Text("Loading...");
+                      if (snapshot.hasData) {
+                        // snapshot.data.data();
+                        Map<String, dynamic> data =
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        print(data);
+                        var userList = [];
+                        data['members']
+                            .forEach((uid, userData) => userList.add(userData));
+                        print(userList);
+                        return ListView.separated(
+                          itemBuilder: (_, index) {
+                            // return Text(snapshot.data!
+                            //     .get(FieldPath(['members', index.toString()])));
+                            return Text(userList[index]['name']);
+                          },
+                          // itemCount: snapshot.data!.get('members').length,
+                          itemCount: data['members'].length,
+                          separatorBuilder: (_, index) {
+                            return Divider();
+                          },
+                        );
+                      }
+                      return Container();
+                    }),
               ),
+              // FilePickerButton(),
+              FilePickerButton(updateFilePath: updateVideoPath),
+              ElevatedButton(
+                child: Text("Start Movie"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctxt) => ChangeNotifierProvider(
+                        create: (ctxt) =>
+                            Provider.of<IdModel>(context, listen: false),
+                        child: VideoApp(
+                          path: _videoPath,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              )
             ],
           ),
         ),

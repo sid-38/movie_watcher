@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_watcher/models/idModel.dart';
 import 'package:movie_watcher/name_enter.dart';
 import 'package:movie_watcher/roomHome.dart';
+import 'package:movie_watcher/roomJoiner.dart';
 import 'package:movie_watcher/utils/randomGen.dart';
 import 'package:provider/provider.dart';
 
@@ -17,46 +18,53 @@ class RoomCreater extends StatelessWidget {
       appBar: AppBar(),
       body: Container(
           child: Center(
-        child: ElevatedButton(
-          child: Text("Create Room"),
-          onPressed: () {
-            String id = getRandomString(6);
-            String? name;
-            showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (ctxt) {
-                  return NameEnter(onNext: (String _name) {
-                    name = _name;
-                  });
-                }).then((value) {
-              print(name);
-              rooms.doc(id).set({
-                'creator': FirebaseAuth.instance.currentUser!.uid.toString(),
-                "play": false,
-                'members': [
-                  {
-                    'uid': FirebaseAuth.instance.currentUser!.uid.toString(),
-                    'name': name
+        child:
+            Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          ElevatedButton(
+            child: Text("Create Room"),
+            onPressed: () {
+              String id = getRandomString(6);
+              String? name;
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (ctxt) {
+                    return NameEnter(onNext: (String _name) {
+                      name = _name;
+                    });
+                  }).then((value) {
+                print(name);
+                rooms.doc(id).set({
+                  'creator': FirebaseAuth.instance.currentUser!.uid.toString(),
+                  "play": false,
+                  'members': {
+                    FirebaseAuth.instance.currentUser!.uid.toString(): {
+                      'uid': FirebaseAuth.instance.currentUser!.uid.toString(),
+                      'name': name,
+                      'isFileChosen': false
+                    }
                   }
-                ]
-              }).then((value) {
-                print("Room Created");
-                Provider.of<IdModel>(context, listen: false).changeId(id);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctxt) => ChangeNotifierProvider(
-                      create: (ctxt) =>
-                          Provider.of<IdModel>(context, listen: false),
-                      child: RoomHome(),
+                }).then((value) {
+                  print("Room Created");
+                  Provider.of<IdModel>(context, listen: false).changeRoomId(id);
+                  Provider.of<IdModel>(context, listen: false).changeUId(
+                      FirebaseAuth.instance.currentUser!.uid.toString());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctxt) => ChangeNotifierProvider(
+                        create: (ctxt) =>
+                            Provider.of<IdModel>(context, listen: false),
+                        child: RoomHome(),
+                      ),
                     ),
-                  ),
-                );
-              }).catchError((error) => print("Error $error"));
-            });
-          },
-        ),
+                  );
+                }).catchError((error) => print("Error $error"));
+              });
+            },
+          ),
+          RoomJoiner(),
+        ]),
       )),
     );
   }
